@@ -1,0 +1,102 @@
+/* style.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: #f8faf9; /* Soft, clean background */
+    color: #2c3e50;
+    line-height: 1.6;
+    padding: 2rem 1rem;
+}
+
+.container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: #27ae60; /* Biotech green accent */
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    border-bottom: 2px solid #e0e6e3;
+    padding-bottom: 1rem;
+}
+
+nav a {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+nav a:hover {
+    color: #27ae60;
+}
+
+section {
+    margin-bottom: 3rem;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+h2 {
+    border-bottom: 2px solid #27ae60;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* List Styling for Notes */
+ul {
+    list-style-type: none;
+}
+
+ul li {
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+ul li a {
+    color: #2980b9;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+ul li a:hover {
+    text-decoration: underline;
+}
+
+/* Table Styling for Grades */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #f1f4f2;
+    color: #2c3e50;
+}
