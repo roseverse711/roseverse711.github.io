@@ -1,102 +1,93 @@
-/* style.css */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
+
+:root {
+    --bg-color: #fcf1f4; /* Soft pastel strawberry milk pink */
+    --text-color: #3b4d40; /* Deep matcha for readable text */
+    --accent-color: #8ba888; /* Soft matcha green */
+    --card-bg: #ffffff;
+    --border: #f0d9e0; /* Deeper pink for borders */
+    --shadow: 0 10px 30px rgba(139, 168, 136, 0.15); /* Matcha tinted shadow */
 }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: #f8faf9; /* Soft, clean background */
-    color: #2c3e50;
-    line-height: 1.6;
-    padding: 2rem 1rem;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.7;
+    padding: 3rem 1.5rem;
+    font-weight: 300;
 }
 
-.container {
-    max-width: 700px;
-    margin: 0 auto;
+.container { max-width: 680px; margin: 0 auto; }
+
+h1, h2, h3 {
+    font-family: 'Lora', serif;
+    font-weight: 400;
+    color: var(--accent-color);
 }
 
-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-header h1 {
-    font-size: 2.5rem;
-    color: #27ae60; /* Biotech green accent */
-}
+header { text-align: center; margin-bottom: 4rem; }
+header h1 { font-size: 2.8rem; margin-bottom: 0.5rem; }
+header p { font-style: italic; color: #8ba888; opacity: 0.8; }
 
 nav {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
-    border-bottom: 2px solid #e0e6e3;
-    padding-bottom: 1rem;
+    display: flex; justify-content: center; flex-wrap: wrap;
+    gap: 2rem; margin-bottom: 4rem;
 }
 
 nav a {
-    color: #2c3e50;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.2s;
+    color: var(--text-color); text-decoration: none;
+    font-size: 0.9rem; font-weight: 500; text-transform: uppercase;
+    transition: color 0.3s ease, transform 0.3s ease;
 }
 
-nav a:hover {
-    color: #27ae60;
-}
+nav a:hover { color: var(--accent-color); transform: translateY(-2px); }
 
-section {
-    margin-bottom: 3rem;
-    background: white;
+/* EXTRA ROUNDED CARDS */
+.card, section > div, ul li {
+    background: var(--card-bg);
     padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-}
-
-h2 {
-    border-bottom: 2px solid #27ae60;
-    padding-bottom: 0.5rem;
+    border-radius: 24px; /* Super round edges */
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
     margin-bottom: 1.5rem;
+    transition: transform 0.4s ease;
 }
 
-/* List Styling for Notes */
-ul {
-    list-style-type: none;
+.card:hover, section > div:hover, ul li:hover {
+    transform: translateY(-4px);
 }
 
-ul li {
-    padding: 1rem 0;
-    border-bottom: 1px solid #eee;
+/* LINKS FOR DRIVE/CERTIFICATES */
+a.drive-link {
+    display: inline-block;
+    margin-top: 1rem; margin-right: 1rem;
+    color: var(--accent-color);
+    text-decoration: none; font-weight: 500;
+    border-bottom: 2px solid #f0d9e0;
+    transition: border-color 0.3s ease;
 }
 
-ul li a {
-    color: #2980b9;
-    text-decoration: none;
-    font-weight: bold;
-}
+a.drive-link:hover { border-bottom: 2px solid var(--accent-color); }
 
-ul li a:hover {
-    text-decoration: underline;
-}
-
-/* Table Styling for Grades */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-}
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background-color: #f1f4f2;
+/* CODE BLOCK STYLING */
+pre {
+    background: #f8fcf9; /* Very faint green tint */
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid var(--accent-color);
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    font-family: monospace;
+    font-size: 0.9rem;
     color: #2c3e50;
+}
+
+/* ANIMATION FOR FLOATING ELEMENTS */
+@keyframes float {
+    0% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-80px) rotate(180deg); }
+    100% { transform: translateY(0) rotate(360deg); }
 }
