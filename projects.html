@@ -19,20 +19,27 @@
             <a href="workshops.html">Workshops</a>
             <a href="projects.html">Projects</a>
         </nav>
+        
+           <section>
+    <h2>Academic & Lab Projects</h2>
+    
+    <div>
+        <h3>Cancer Gene Expression Analysis</h3>
+        <p>A computational project analyzing open-source microarray data to identify differential gene expression patterns in specific cancer cells.</p>
+        
+        <pre><code>import pandas as pd
+import matplotlib.pyplot as plt
 
-        <section>
-            <h2>Academic & Lab Projects</h2>
-            <div style="margin-bottom: 2rem;">
-                <h3>Cancer Gene Expression Analysis</h3>
-                <p><strong>Tools:</strong> Python, Pandas, Matplotlib</p>
-                <p>A computational project analyzing open-source microarray data to identify differential gene expression patterns in specific cancer cells. Focused on writing efficient logic to filter and visualize the biological data.</p>
-            </div>
+# Load cancer microarray data
+data = pd.read_csv('gene_expression.csv')
+significant_genes = data[data['p_value'] < 0.05]
 
-            <div>
-                <h3>Enzyme Kinetics Lab Report</h3>
-                <p><strong>Focus:</strong> Biochemistry</p>
-                <p>Conducted spectrophotometric assays to determine the Michaelis-Menten constant (Km) and maximum velocity (Vmax) of alkaline phosphatase.</p>
-            </div>
+print("Top identified genes:")
+print(significant_genes.head())</code></pre>
+        
+        <a href="YOUR_DRIVE_LINK_HERE" target="_blank" class="drive-link">🍓 View Project Photos</a>
+        <a href="YOUR_DRIVE_LINK_HERE" target="_blank" class="drive-link">📄 View Lab Report</a>
+    </div>
         </section>
 
         <section>
