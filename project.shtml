@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects & Activities</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Biotechnology Journal</h1>
+        </header>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="notes.html">Notes</a>
+            <a href="grades.html">Grades</a>
+            <a href="workshops.html">Workshops</a>
+            <a href="projects.html">Projects</a>
+        </nav>
+
+        <section>
+            <h2>Academic & Lab Projects</h2>
+            <div style="margin-bottom: 2rem;">
+                <h3>Cancer Gene Expression Analysis</h3>
+                <p><strong>Tools:</strong> Python, Pandas, Matplotlib</p>
+                <p>A computational project analyzing open-source microarray data to identify differential gene expression patterns in specific cancer cells. Focused on writing efficient logic to filter and visualize the biological data.</p>
+            </div>
+
+            <div>
+                <h3>Enzyme Kinetics Lab Report</h3>
+                <p><strong>Focus:</strong> Biochemistry</p>
+                <p>Conducted spectrophotometric assays to determine the Michaelis-Menten constant (Km) and maximum velocity (Vmax) of alkaline phosphatase.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Extracurricular Involvement</h2>
+            <div>
+                <h3>College Theatre Club - Intercollegiate Festival</h3>
+                <p><strong>Role:</strong> Scriptwriter & Participant</p>
+                <p>Collaborated with the theatre team to conceptualize, write, and perform scripts for the annual "Mad Ads" and street play competitions, managing both creative direction and team rehearsals.</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>
