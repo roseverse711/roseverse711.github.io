@@ -3,30 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Biotech Journey</title>
-    <link rel="stylesheet" href="style.css"> 
+    <title>My Protected Journal</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- html2pdf library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Biotechnology Journal</h1>
-            <p>Documenting my academic journey, notes, and research.</p>
-        </header>
-
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="notes.html">Notes</a>
-            <a href="grades.html">Grades</a>
-            <a href="workshops.html">Workshops</a>
-            <a href="projects.html">Projects</a>
-        </nav>
-
-        <section>
-            <h2>Welcome</h2>
-            <p>Hello! I am a Biotechnology student, and this is my digital archive. I built this space to keep track of my academic progress, store my lecture notes, and log the workshops and lab projects I participate in.</p>
-            <p>Use the menu above to navigate through my notes and academic records.</p>
-        </section>
+    <div id="controls" class="no-print">
+        <h2>My Safe Space</h2>
+        <div class="button-group">
+            <button onclick="setTheme('pink-green')">🌸 Pink & Green (Prompts)</button>
+            <button onclick="setTheme('blue')">🦋 Blue (Sad / Songs)</button>
+            <button onclick="setTheme('yellow')">🌻 Yellow (Happy / Sunflowers)</button>
+        </div>
+        <div class="button-group" style="margin-top: 10px;">
+            <button onclick="addPage()" class="action-btn">+ Add Page</button>
+            <button onclick="downloadPDF()" class="action-btn download-btn">⬇️ Download as PDF</button>
+        </div>
+        <p class="privacy-note">Privacy Note: Everything runs in your browser. Nothing is saved online.</p>
     </div>
-    <script src="magic.js"></script>
+
+    <!-- The main journal container that will be converted to PDF -->
+    <div id="journal-container">
+        <!-- Pages will be injected here by JavaScript -->
+    </div>
+
+    <!-- Talking Flower Element -->
+    <div id="talking-flower" class="no-print">
+        <div id="flower-message">I'm so glad you're here today!</div>
+        <div class="flower-icon">🌸</div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
