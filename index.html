@@ -3,193 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Space</title>
-    <style>
-        /* CSS Reset & Variables */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-color: #fdfbf7;
-            --text-color: #2c2c2c;
-            --accent-color: #8c7863;
-            --card-bg: #ffffff;
-            --border-color: #e6e1da;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            padding: 2rem 1rem;
-        }
-
-        /* Container Layout */
-        .container {
-            max-width: 650px;
-            margin: 0 auto;
-        }
-
-        /* Header Styling */
-        header {
-            margin-bottom: 3rem;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2.2rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-            margin-bottom: 0.5rem;
-        }
-
-        header p {
-            color: var(--accent-color);
-            font-style: italic;
-            font-size: 1.1rem;
-        }
-
-        /* Navigation Links */
-        nav {
-            display: flex;
-            justify-content: center;
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1rem;
-        }
-
-        nav a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        nav a:hover {
-            color: var(--accent-color);
-        }
-
-        /* Section Content */
-        section {
-            margin-bottom: 3rem;
-        }
-
-        section h2 {
-            font-size: 1.4rem;
-            margin-bottom: 1rem;
-            border-left: 3px solid var(--accent-color);
-            padding-left: 0.75rem;
-        }
-
-        p {
-            margin-bottom: 1rem;
-            font-size: 1.05rem;
-        }
-
-        /* Grid for Cards/Projects */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        @media (min-width: 480px) {
-            .grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 1.25rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        .card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .card p {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 0;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            margin-top: 5rem;
-            font-size: 0.85rem;
-            color: #888;
-            border-top: 1px solid var(--border-color);
-            padding-top: 1.5rem;
-        }
-    </style>
+    <title>My Biotech Journey</title>
+    <link rel="stylesheet" href="style.css"> 
 </head>
 <body>
-
     <div class="container">
-        
         <header>
-            <h1>Welcome to My Space</h1>
-            <p>A digital notebook for ideas, projects, and creative logs.</p>
+            <h1>Biotechnology Journal</h1>
+            <p>Documenting my academic journey, notes, and research.</p>
         </header>
 
         <nav>
-            <a href="#about">About</a>
-            <a href="#projects">Projects</a>
-            <a href="#contact">Contact</a>
+            <a href="index.html">Home</a>
+            <a href="notes.html">Notes</a>
+            <a href="grades.html">Grades</a>
+            <a href="workshops.html">Workshops</a>
+            <a href="projects.html">Projects</a>
         </nav>
 
-        <section id="about">
-            <h2>About Me</h2>
-            <p>Hello! I'm creating this space to organize my current work, share thoughts, and experiment with web design. I enjoy building things where functionality meets a clean aesthetic.</p>
-            <p>Feel free to look around and explore some of the concepts I've been working on lately.</p>
+        <section>
+            <h2>Welcome</h2>
+            <p>Hello! I am a Biotechnology student, and this is my digital archive. I built this space to keep track of my academic progress, store my lecture notes, and log the workshops and lab projects I participate in.</p>
+            <p>Use the menu above to navigate through my notes and academic records.</p>
         </section>
-
-        <section id="projects">
-            <h2>Featured Projects</h2>
-            <div class="grid">
-                
-                <div class="card">
-                    <h3>Project One</h3>
-                    <p>A brief description of something cool you've built, a script you wrote, or a creative asset you designed.</p>
-                </div>
-
-                <div class="card">
-                    <h3>Project Two</h3>
-                    <p>Details about a recent milestone, an ongoing academic project, or an interactive web element.</p>
-                </div>
-                
-            </div>
-        </section>
-
-        <section id="contact">
-            <h2>Get in Touch</h2>
-            <p>If you'd like to connect, collaborate, or just say hi, feel free to reach out via social links or drop an email here.</p>
-        </section>
-
-        <footer>
-            <p>&copy; 2026. Built entirely with clean HTML &amp; CSS.</p>
-        </footer>
-
     </div>
-
 </body>
 </html>
