@@ -1,93 +1,185 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap');
-
 :root {
-    --bg-color: #fcf1f4; /* Soft pastel strawberry milk pink */
-    --text-color: #3b4d40; /* Deep matcha for readable text */
-    --accent-color: #8ba888; /* Soft matcha green */
-    --card-bg: #ffffff;
-    --border: #f0d9e0; /* Deeper pink for borders */
-    --shadow: 0 10px 30px rgba(139, 168, 136, 0.15); /* Matcha tinted shadow */
+    --pastel-pink: #FFD1DC;
+    --pastel-green: #C1E1C1;
+    --pastel-blue: #AEC6CF;
+    --pastel-yellow: #FDFD96;
 }
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    line-height: 1.7;
-    padding: 3rem 1.5rem;
-    font-weight: 300;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.container { max-width: 680px; margin: 0 auto; }
-
-h1, h2, h3 {
-    font-family: 'Lora', serif;
-    font-weight: 400;
-    color: var(--accent-color);
+/* UI Controls */
+#controls {
+    text-align: center;
+    margin-bottom: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 800px;
 }
 
-header { text-align: center; margin-bottom: 4rem; }
-header h1 { font-size: 2.8rem; margin-bottom: 0.5rem; }
-header p { font-style: italic; color: #8ba888; opacity: 0.8; }
-
-nav {
-    display: flex; justify-content: center; flex-wrap: wrap;
-    gap: 2rem; margin-bottom: 4rem;
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    background: #f0f0f0;
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.2s;
 }
 
-nav a {
-    color: var(--text-color); text-decoration: none;
-    font-size: 0.9rem; font-weight: 500; text-transform: uppercase;
-    transition: color 0.3s ease, transform 0.3s ease;
+button:hover { background: #e0e0e0; transform: scale(1.02); }
+.action-btn { background: #fff; border: 2px solid #ccc; }
+.download-btn { background: var(--pastel-green); border: none; }
+.privacy-note { font-size: 12px; color: #888; font-style: italic; margin-top: 15px; }
+
+/* Journal Pages Container */
+#journal-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 21cm; /* Standard A4 width */
 }
 
-nav a:hover { color: var(--accent-color); transform: translateY(-2px); }
-
-/* EXTRA ROUNDED CARDS */
-.card, section > div, ul li {
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 24px; /* Super round edges */
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    margin-bottom: 1.5rem;
-    transition: transform 0.4s ease;
+.page {
+    width: 21cm;
+    min-height: 29.7cm; /* Standard A4 height */
+    padding: 2.5cm;
+    box-sizing: border-box;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    background-color: white;
 }
 
-.card:hover, section > div:hover, ul li:hover {
-    transform: translateY(-4px);
+textarea {
+    width: 100%;
+    height: 100%;
+    min-height: 22cm;
+    border: none;
+    background: transparent;
+    resize: none;
+    font-size: 16px;
+    font-family: 'Georgia', serif;
+    line-height: 2; /* Line height to match dots */
+    outline: none;
+    position: relative;
+    z-index: 10;
 }
 
-/* LINKS FOR DRIVE/CERTIFICATES */
-a.drive-link {
-    display: inline-block;
-    margin-top: 1rem; margin-right: 1rem;
-    color: var(--accent-color);
-    text-decoration: none; font-weight: 500;
-    border-bottom: 2px solid #f0d9e0;
-    transition: border-color 0.3s ease;
+/* Template 1: Pink & Green Dotted */
+.theme-pink-green {
+    border: 15px solid;
+    border-image: linear-gradient(to bottom right, var(--pastel-pink), var(--pastel-green)) 1;
+    background-image: radial-gradient(#d3d3d3 2px, transparent 2px);
+    background-size: 32px 32px; /* Dotted page effect */
+    background-position: 0 5px;
+}
+.prompt-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    font-style: italic;
+    color: #444;
+    text-align: center;
+    border: 2px dashed var(--pastel-pink);
+    position: relative;
+    z-index: 10;
 }
 
-a.drive-link:hover { border-bottom: 2px solid var(--accent-color); }
+/* Template 2: Blue Sad / Butterflies */
+.theme-blue {
+    background-color: var(--pastel-blue);
+    border: 10px solid #9eb8c1;
+}
+.theme-blue::before, .theme-blue::after {
+    content: "🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋 🦋";
+    position: absolute;
+    top: 0;
+    width: 40px;
+    height: 100%;
+    word-wrap: break-word;
+    font-size: 28px;
+    line-height: 3;
+    opacity: 0.4;
+    z-index: 1;
+}
+.theme-blue::before { left: 15px; }
+.theme-blue::after { right: 15px; }
 
-/* CODE BLOCK STYLING */
-pre {
-    background: #f8fcf9; /* Very faint green tint */
-    padding: 1.5rem;
-    border-radius: 16px;
-    border: 1px solid var(--accent-color);
-    overflow-x: auto;
-    margin: 1.5rem 0;
-    font-family: monospace;
-    font-size: 0.9rem;
-    color: #2c3e50;
+.song-box {
+    background: rgba(255, 255, 255, 0.6);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    position: relative;
+    z-index: 10;
+    border-left: 5px solid #fff;
 }
 
-/* ANIMATION FOR FLOATING ELEMENTS */
-@keyframes float {
-    0% { transform: translateY(0) rotate(0deg); }
-    50% { transform: translateY(-80px) rotate(180deg); }
-    100% { transform: translateY(0) rotate(360deg); }
+/* Template 3: Yellow Happy / Sunflowers */
+.theme-yellow {
+    background-color: var(--pastel-yellow);
+}
+.sunflower-border {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    border: 25px solid transparent;
+    /* CSS trick to use SVG emojis as a border */
+    border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext x='0' y='30' font-size='28'%3E🌻%3C/text%3E%3C/svg%3E") 30 round;
+    z-index: 5;
+}
+
+/* Talking Flower */
+#talking-flower {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+    z-index: 1000;
+}
+.flower-icon {
+    font-size: 50px;
+    animation: gentle-bounce 3s infinite ease-in-out;
+}
+#flower-message {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 20px 20px 0 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    max-width: 200px;
+    font-size: 14px;
+    color: #ff69b4;
+    font-weight: bold;
+    border: 2px solid var(--pastel-pink);
+}
+
+@keyframes gentle-bounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+/* Hide UI elements during PDF generation */
+@media print {
+    .no-print { display: none !important; }
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; margin: 0; page-break-after: always; }
 }
