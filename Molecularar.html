@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Molecular Message — AR Viewer</title>
+<script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Space Mono',monospace;overflow:hidden}
+  #ui{
+    position:fixed;top:0;left:0;width:100%;z-index:10;
+    padding:14px;background:linear-gradient(to bottom, rgba(0,0,0,0.65), transparent);
+    color:#fff;
+  }
+  #ui h1{font-size:15px;font-weight:700;margin-bottom:8px;letter-spacing:0.5px}
+  .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  textarea{
+    flex:1 1 160px;min-width:120px;padding:8px;font-family:'Space Mono',monospace;font-size:12px;
+    border:1px solid rgba(255,255,255,0.3);border-radius:6px;background:rgba(0,0,0,0.4);color:#fff;resize:none;height:36px;outline:none;
+  }
+  button{
+    padding:8px 12px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;
+    border:1px solid rgba(255,255,255,0.35);border-radius:6px;background:rgba(0,0,0,0.4);color:#fff;cursor:pointer;
+  }
+  button.active-dna{border-color:#1D9E75;color:#1D9E75;background:rgba(29,158,117,0.2)}
+  button.active-rna{border-color:#378ADD;color:#378ADD;background:rgba(55,138,221,0.2)}
+  button.active-prot{border-color:#D85A30;color:#D85A30;background:rgba(216,90,48,0.2)}
+  button.active-expr{border-color:#9966CC;color:#9966CC;background:rgba(153,102,204,0.2)}
+  #infocard{
+    display:none;margin-top:8px;padding:8px 10px;background:rgba(0,0,0,0.5);
+    border-radius:6px;color:#fff;font-size:11px;line-height:1.6;max-width:480px;
+  }
+  #infocard .badge{display:inline-block;font-size:9px;padding:1px 7px;border-radius:10px;margin-right:5px;font-weight:700}
+  #infocard.visible{display:block}
+  #marker-hint{
+    position:fixed;bottom:0;left:0;width:100%;z-index:10;
+    padding:14px;text-align:center;color:#fff;font-size:11px;letter-spacing:1px;
+    background:linear-gradient(to top, rgba(0,0,0,0.65), transparent);
+  }
+  #marker-img{
+    position:fixed;bottom:60px;right:14px;z-index:10;width:70px;height:70px;
+    border:2px solid #fff;border-radius:6px;background:#fff;
+  }
+  a-scene{width:100%;height:100%}
+</style>
+</head>
+<body>
+
+<div id="ui">
+  <h1>🧬 Molecular Message — AR Viewer</h1>
+  <div class="row">
+    <textarea id="msg" placeholder="Type message…">Hello World</textarea>
+    <button id="b-dna" class="active-dna" onclick="setMode('dna')">DNA</button>
+    <button id="b-rna" onclick="setMode('rna')">RNA</button>
+    <button id="b-prot" onclick="setMode('protein')">Protein</button>
+    <button id="b-expr" onclick="setMode('express')">Body</button>
+    <button onclick="build()">GO</button>
+  </div>
+  <div id="infocard"></div>
+</div>
+
+<div id="marker-hint">Point your camera at a <strong>Hiro marker</strong> — print one or show it on another screen</div>
+<img id="marker-img" src="https://raw.githubusercontent.com/AR-js-org/AR.js/master/data/images/hiro.png" alt="Hiro marker" onclick="window.open(this.src)">
+
+<a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;" vr-mode-ui="enabled: false">
+  <a-marker preset="hiro" id="hiro">
+    <a-entity id="molecule" position="0 0 0" scale="0.25 0.25 0.25"></a-entity>
+  </a-marker>
+  <a-entity camera></a-entity>
+</a-scene>
+
+<script>
+let mode = 'dna';
+const LTRS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ ';
+const AAS = ['Ala','Arg','Asn','Asp','Cys','Gln','Glu','Gly','His','Ile','Leu','Lys','Met','Phe','Pro','Ser','Thr','Trp','Tyr','Val'];
+const DNA_COLORS = { A:'#1D9E75', T:'#D85A30', G:'#378ADD', C:'#9966CC' };
+const RNA_COLORS = { A:'#1D9E75', U:'#E07020', G:'#378ADD', C:'#9966CC' };
+const AA_COLORS  = ['#1D9E75','#378ADD','#D85A30','#9966CC','#EF9F27','#E24B4A','#0F6E56','#534AB7','#993C1D','#BA7517'];
+const COMP = { A:'T', T:'A', G:'C', C:'G' };
+
+const PROTEIN_TYPES = [
+  { name:'Globular enzyme', badge:'Enzyme', color:'#1D9E75', badgeBg:'rgba(29,158,117,0.5)',
+    desc:'Folds into a compact sphere with an active site pocket — like amylase or pepsin, catalysing reactions up to 1,000,000× faster.',
+    shape:'globular', organ:'Pancreas / gut lining' },
+  { name:'Antibody (Y-shape)', badge:'Immune', color:'#378ADD', badgeBg:'rgba(55,138,221,0.5)',
+    desc:'A Y-shaped immunoglobulin. The two Fab arms bind antigens like a lock and key — your immune system\'s radar.',
+    shape:'antibody', organ:'Blood & lymph nodes' },
+  { name:'Membrane receptor', badge:'Signalling', color:'#D85A30', badgeBg:'rgba(216,90,48,0.5)',
+    desc:'Hydrophobic helices span the cell membrane, detecting signals outside and triggering responses inside — like insulin receptors.',
+    shape:'membrane', organ:'Cell surface (everywhere)' },
+  { name:'Fibrous structural protein', badge:'Structural', color:'#9966CC', badgeBg:'rgba(153,102,204,0.5)',
+    desc:'Long strands twist into a triple helix — like collagen or keratin, forming your skin, tendons, and hair.',
+    shape:'fibrous', organ:'Skin / tendons / hair' },
+  { name:'Transport protein', badge:'Transport', color:'#EF9F27', badgeBg:'rgba(239,159,39,0.5)',
+    desc:'Opens and closes like a molecular suitcase — like haemoglobin carrying oxygen through your blood.',
+    shape:'transport', organ:'Blood / cell membranes' }
+];
+
+function pickProteinType(aas) {
+  const cnt = {};
+  aas.forEach(a => { cnt[a] = (cnt[a]||0)+1; });
+  const hydrophobic = ['Ile','Leu','Val','Phe','Met','Trp'].filter(a=>cnt[a]).length;
+  const charged     = ['Arg','Lys','Asp','Glu','His'].filter(a=>cnt[a]).length;
+  const polar       = ['Ser','Thr','Asn','Gln','Tyr','Cys'].filter(a=>cnt[a]).length;
+  const structural  = (cnt['Gly']||0) + (cnt['Pro']||0);
+  const scores = [charged*2, hydrophobic*1.5+polar, hydrophobic*2, structural*3, polar+charged];
+  return PROTEIN_TYPES[scores.indexOf(Math.max(...scores)) % PROTEIN_TYPES.length];
+}
+
+function setMode(m) {
+  mode = m;
+  ['dna','rna','prot','expr'].forEach(x => document.getElementById('b-'+x).className = '');
+  const cls = { dna:'active-dna', rna:'active-rna', protein:'active-prot', express:'active-expr' };
+  const ids = { dna:'b-dna', rna:'b-rna', protein:'b-prot', express:'b-expr' };
+  document.getElementById(ids[mode]).className = cls[mode];
+  build();
+}
+
+function charToBase(ch) { const i = LTRS.indexOf(ch.toUpperCase()); return i < 0 ? null : ['A','T','G','C'][i%4]; }
+function charToAA(ch)   { const i = LTRS.indexOf(ch.toUpperCase()); return i < 0 ? null : AAS[i%AAS.length]; }
+
+function encode(msg) {
+  const bases = [], aas = [];
+  for (const c of msg) {
+    const b = charToBase(c); if (b) bases.push(b);
+    const a = charToAA(c);   if (a) aas.push(a);
+  }
+  return { bases, aas };
+}
+
+// Build the 3D molecule as A-Frame entities and attach to #molecule
+function build() {
+  const msg = document.getElementById('msg').value || 'Hello';
+  const { bases, aas } = encode(msg);
+  const root = document.getElementById('molecule');
+  // clear previous
+  while (root.firstChild) root.removeChild(root.firstChild);
+
+  document.getElementById('infocard').className = '';
+
+  if (mode === 'dna')      buildDNA(root, bases);
+  else if (mode === 'rna') buildRNA(root, bases);
+  else if (mode === 'protein') buildProtein(root, aas);
+  else                      buildExpression(root, aas);
+}
+
+// DNA: double helix — two strands of spheres with rungs (base pairs)
+function buildDNA(root, bases) {
+  const n = Math.min(bases.length, 24); // cap for performance
+  const rise = 0.9, radius = 1.6, turns = n / 6;
+  for (let i = 0; i < n; i++) {
+    const angle = (i / n) * Math.PI * 2 * turns;
+    const y = i * rise - (n*rise)/2;
+    const x1 = Math.cos(angle) * radius, z1 = Math.sin(angle) * radius;
+    const x2 = -x1, z2 = -z1;
+    const base = bases[i], comp = COMP[base] || 'T';
+
+    // strand 1 sphere
+    const s1 = document.createElement('a-sphere');
+    s1.setAttribute('position', `${x1} ${y} ${z1}`);
+    s1.setAttribute('radius', '0.35');
+    s1.setAttribute('color', DNA_COLORS[base] || '#888');
+    root.appendChild(s1);
+
+    // strand 2 sphere
+    const s2 = document.createElement('a-sphere');
+    s2.setAttribute('position', `${x2} ${y} ${z2}`);
+    s2.setAttribute('radius', '0.35');
+    s2.setAttribute('color', DNA_COLORS[comp] || '#888');
+    root.appendChild(s2);
+
+    // rung connecting base pair
+    const dx = x2-x1, dz = z2-z1;
+    const len = Math.sqrt(dx*dx + dz*dz);
+    const rung = document.createElement('a-cylinder');
+    rung.setAttribute('position', `${(x1+x2)/2} ${y} ${(z1+z2)/2}`);
+    rung.setAttribute('radius', '0.06');
+    rung.setAttribute('height', len.toFixed(2));
+    rung.setAttribute('color', '#cccccc');
+    rung.setAttribute('rotation', `0 0 ${(Math.atan2(dx,dz)*180/Math.PI + 90).toFixed(1)}`);
+    root.appendChild(rung);
+
+    // backbone connectors to next
+    if (i < n-1) {
+      const angle2 = ((i+1)/n)*Math.PI*2*turns;
+      const y2pos = (i+1)*rise - (n*rise)/2;
+      addBackbone(root, x1, y, z1, Math.cos(angle2)*radius, y2pos, Math.sin(angle2)*radius, DNA_COLORS[base]);
+      addBackbone(root, x2, y, z2, -Math.cos(angle2)*radius, y2pos, -Math.sin(angle2)*radius, DNA_COLORS[comp]);
+    }
+  }
+  centerVertically(root, n, 0.9);
+}
+
+// RNA: single strand helix
+function buildRNA(root, bases) {
+  const n = Math.min(bases.length, 24);
+  const rise = 0.9, radius = 1.8, turns = n/6;
+  let prev = null;
+  for (let i = 0; i < n; i++) {
+    const angle = (i/n)*Math.PI*2*turns;
+    const y = i*rise - (n*rise)/2;
+    const x = Math.cos(angle)*radius, z = Math.sin(angle)*radius;
+    const base = bases[i]==='T' ? 'U' : bases[i];
+
+    const s = document.createElement('a-sphere');
+    s.setAttribute('position', `${x} ${y} ${z}`);
+    s.setAttribute('radius', '0.38');
+    s.setAttribute('color', RNA_COLORS[base] || '#888');
+    root.appendChild(s);
+
+    if (prev) addBackbone(root, prev.x, prev.y, prev.z, x, y, z, '#cccccc');
+    prev = {x,y,z};
+  }
+  centerVertically(root, n, 0.9);
+}
+
+// Protein: folded chain of colored spheres (one per residue)
+function buildProtein(root, aas) {
+  const n = Math.min(aas.length, 20);
+  const rise = 0.95, amp = 1.4;
+  let prev = null;
+  for (let i = 0; i < n; i++) {
+    const y = i*rise - (n*rise)/2;
+    const angle = (i / n) * Math.PI * 2 * 2;
+    const x = Math.sin(angle)*amp, z = Math.cos(angle)*amp;
+
+    const s = document.createElement('a-sphere');
+    s.setAttribute('position', `${x} ${y} ${z}`);
+    s.setAttribute('radius', '0.42');
+    s.setAttribute('color', AA_COLORS[i % AA_COLORS.length]);
+    root.appendChild(s);
+
+    // text label
+    const txt = document.createElement('a-text');
+    txt.setAttribute('value', aas[i].slice(0,3));
+    txt.setAttribute('position', `${x} ${y+0.55} ${z}`);
+    txt.setAttribute('align', 'center');
+    txt.setAttribute('scale', '1.2 1.2 1.2');
+    txt.setAttribute('color', '#ffffff');
+    txt.setAttribute('side', 'double');
+    root.appendChild(txt);
+
+    if (prev) addBackbone(root, prev.x, prev.y, prev.z, x, y, z, '#dddddd');
+    prev = {x,y,z};
+  }
+  centerVertically(root, n, 0.95);
+}
+
+// Helper: cylinder between two points
+function addBackbone(root, x1,y1,z1, x2,y2,z2, color) {
+  const dx=x2-x1, dy=y2-y1, dz=z2-z1;
+  const len = Math.sqrt(dx*dx+dy*dy+dz*dz);
+  const mx=(x1+x2)/2, my=(y1+y2)/2, mz=(z1+z2)/2;
+  const cyl = document.createElement('a-cylinder');
+  cyl.setAttribute('position', `${mx} ${my} ${mz}`);
+  cyl.setAttribute('radius', '0.08');
+  cyl.setAttribute('height', len.toFixed(2));
+  cyl.setAttribute('color', color || '#cccccc');
+  // orient cylinder along direction vector
+  const pitch = Math.atan2(Math.sqrt(dx*dx+dz*dz), dy) * 180/Math.PI;
+  const yaw = Math.atan2(dx, dz) * 180/Math.PI;
+  cyl.setAttribute('rotation', `${pitch.toFixed(1)} ${yaw.toFixed(1)} 0`);
+  root.appendChild(cyl);
+}
+
+// Body expression: render the nearest matching protein structure type in AR
+function buildExpression(root, aas) {
+  const ptype = pickProteinType(aas);
+  showInfoCard(ptype);
+
+  if (ptype.shape === 'globular') {
+    // Sphere of small colored "atoms" + a highlighted active-site pocket
+    for (let i=0;i<16;i++){
+      const a=(i/16)*Math.PI*2, b=(i*0.61)%Math.PI;
+      const r=1.6;
+      const x=Math.sin(b)*Math.cos(a)*r, y=Math.cos(b)*r, z=Math.sin(b)*Math.sin(a)*r;
+      const s=document.createElement('a-sphere');
+      s.setAttribute('position', `${x} ${y} ${z}`);
+      s.setAttribute('radius','0.35');
+      s.setAttribute('color', AA_COLORS[i % AA_COLORS.length]);
+      root.appendChild(s);
+    }
+    const core = document.createElement('a-sphere');
+    core.setAttribute('position','0 0 0');
+    core.setAttribute('radius','1.0');
+    core.setAttribute('color', ptype.color);
+    core.setAttribute('opacity','0.25');
+    root.appendChild(core);
+    // active site marker
+    const pocket = document.createElement('a-torus');
+    pocket.setAttribute('position','1.3 0 0');
+    pocket.setAttribute('radius','0.4');
+    pocket.setAttribute('radius-tubular','0.05');
+    pocket.setAttribute('color', ptype.color);
+    pocket.setAttribute('rotation','90 0 0');
+    root.appendChild(pocket);
+    addLabel(root, 'active site', 1.3, 0.6, 0);
+  }
+
+  else if (ptype.shape === 'antibody') {
+    // Y-shaped: stem + two arms with Fab spheres
+    addCyl(root, 0,-1.4,0, 0,0,0, ptype.color, 0.18);
+    addCyl(root, 0,0,0, -1.4,1.4,0, ptype.color, 0.16);
+    addCyl(root, 0,0,0, 1.4,1.4,0, ptype.color, 0.16);
+    [[-1.4,1.4,0],[1.4,1.4,0]].forEach(([x,y,z])=>{
+      const s=document.createElement('a-sphere');
+      s.setAttribute('position', `${x} ${y} ${z}`);
+      s.setAttribute('radius','0.45');
+      s.setAttribute('color', ptype.color);
+      s.setAttribute('opacity','0.7');
+      root.appendChild(s);
+      addLabel(root, 'Fab', x, y+0.65, z);
+    });
+    addLabel(root, 'Fc', 0, -1.7, 0);
+  }
+
+  else if (ptype.shape === 'membrane') {
+    // Flat plane of small spheres (membrane) + 3 helices crossing it
+    for(let i=-3;i<=3;i++){
+      for(let j=-3;j<=3;j++){
+        const s=document.createElement('a-sphere');
+        s.setAttribute('position', `${i*0.5} 0 ${j*0.5}`);
+        s.setAttribute('radius','0.18');
+        s.setAttribute('color', '#aabbdd');
+        s.setAttribute('opacity','0.5');
+        root.appendChild(s);
+      }
+    }
+    [-0.8,0,0.8].forEach((xo,hi)=>{
+      for(let i=0;i<6;i++){
+        const y=-1.2+i*0.4;
+        const s=document.createElement('a-sphere');
+        s.setAttribute('position', `${xo} ${y} 0`);
+        s.setAttribute('radius','0.22');
+        s.setAttribute('color', AA_COLORS[(hi*3+i)%AA_COLORS.length]);
+        root.appendChild(s);
+      }
+    });
+    const sig=document.createElement('a-sphere');
+    sig.setAttribute('position','0 1.8 0');
+    sig.setAttribute('radius','0.4');
+    sig.setAttribute('color', ptype.color);
+    sig.setAttribute('opacity','0.6');
+    root.appendChild(sig);
+    addLabel(root, 'signal', 0, 2.3, 0);
+    addLabel(root, 'membrane', 1.8, 0, 0);
+  }
+
+  else if (ptype.shape === 'fibrous') {
+    // Three helical strands twisted together
+    for(let s=0;s<3;s++){
+      const phase = s*(Math.PI*2/3);
+      for(let i=0;i<14;i++){
+        const a=(i/14)*Math.PI*4+phase;
+        const y=i*0.25-1.7;
+        const x=Math.cos(a)*0.8, z=Math.sin(a)*0.8;
+        const sp=document.createElement('a-sphere');
+        sp.setAttribute('position', `${x} ${y} ${z}`);
+        sp.setAttribute('radius','0.18');
+        sp.setAttribute('color', AA_COLORS[(s*4+i)%AA_COLORS.length]);
+        root.appendChild(sp);
+      }
+    }
+    addLabel(root, 'triple helix', 0, 2.0, 0);
+  }
+
+  else { // transport
+    // Hollow ring of spheres + a cargo molecule inside
+    for(let i=0;i<14;i++){
+      const a=(i/14)*Math.PI*2;
+      const s=document.createElement('a-sphere');
+      s.setAttribute('position', `${Math.cos(a)*1.6} ${Math.sin(a)*1.4} 0`);
+      s.setAttribute('radius','0.32');
+      s.setAttribute('color', AA_COLORS[i%AA_COLORS.length]);
+      root.appendChild(s);
+    }
+    const ring=document.createElement('a-torus');
+    ring.setAttribute('position','0 0 0');
+    ring.setAttribute('radius','1.6');
+    ring.setAttribute('radius-tubular','0.04');
+    ring.setAttribute('color', ptype.color);
+    ring.setAttribute('opacity','0.4');
+    root.appendChild(ring);
+    const cargo=document.createElement('a-sphere');
+    cargo.setAttribute('position','0 0 0');
+    cargo.setAttribute('radius','0.4');
+    cargo.setAttribute('color', '#EF9F27');
+    root.appendChild(cargo);
+    addLabel(root, 'O\u2082', 0, 0.55, 0);
+  }
+
+  root.setAttribute('position', '0 1.2 0');
+}
+
+// Helper: add a cylinder bond between two points (used by antibody arms)
+function addCyl(root, x1,y1,z1, x2,y2,z2, color, radius) {
+  const dx=x2-x1, dy=y2-y1, dz=z2-z1;
+  const len = Math.sqrt(dx*dx+dy*dy+dz*dz);
+  const mx=(x1+x2)/2, my=(y1+y2)/2, mz=(z1+z2)/2;
+  const cyl = document.createElement('a-cylinder');
+  cyl.setAttribute('position', `${mx} ${my} ${mz}`);
+  cyl.setAttribute('radius', radius.toString());
+  cyl.setAttribute('height', len.toFixed(2));
+  cyl.setAttribute('color', color);
+  const pitch = Math.atan2(Math.sqrt(dx*dx+dz*dz), dy) * 180/Math.PI;
+  const yaw = Math.atan2(dx, dz) * 180/Math.PI;
+  cyl.setAttribute('rotation', `${pitch.toFixed(1)} ${yaw.toFixed(1)} 0`);
+  root.appendChild(cyl);
+}
+
+// Helper: floating text label
+function addLabel(root, text, x, y, z) {
+  const t = document.createElement('a-text');
+  t.setAttribute('value', text);
+  t.setAttribute('position', `${x} ${y} ${z}`);
+  t.setAttribute('align', 'center');
+  t.setAttribute('scale', '1.3 1.3 1.3');
+  t.setAttribute('color', '#ffffff');
+  t.setAttribute('side', 'double');
+  root.appendChild(t);
+}
+
+// Show description card for the matched protein type
+function showInfoCard(ptype) {
+  const card = document.getElementById('infocard');
+  card.className = 'visible';
+  card.innerHTML = `<span class="badge" style="background:${ptype.badgeBg}">${ptype.badge}</span>
+    <strong>${ptype.name}</strong> — ${ptype.desc}<br>
+    <span style="opacity:0.7">Found in:</span> ${ptype.organ}`;
+}
+
+
+function centerVertically(root, n, rise) {
+  const totalHeight = n*rise;
+  root.setAttribute('position', `0 ${(totalHeight/2)*0.25} 0`);
+}
+
+window.addEventListener('load', build);
+</script>
+</body>
+</html>
